@@ -1,6 +1,5 @@
 use std::fs::File;
-use std::io::prelude::*;
-use std::io::{Write, BufReader, BufRead, Error};
+use std::io::Write;
 
 
 pub struct Usuario
@@ -11,14 +10,13 @@ pub struct Usuario
 
 pub trait ImprimeNoArquivo
 {
-    fn imprime_no_arquivo(&self, String) -> ();
+    fn imprime_no_arquivo(&self, output: String) -> ();
 }
 
 impl ImprimeNoArquivo for Usuario
 {
     fn imprime_no_arquivo(&self, output: String) -> ()
     {
-        //println!("teste");
         let mut f = File::create("../files/test.txt")
             .expect("could not open file");
         f.write_all(output.as_bytes())

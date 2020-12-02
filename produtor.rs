@@ -1,16 +1,10 @@
 use std::fs::File;
-use std::io::prelude::*;
-use std::io::{Write, BufReader, BufRead, Error};
+use std::io::Write;
 
 pub struct Produtor
 {
     user_id: String,
 }
-
-// trait ImprimeProdutosDesenvolvidos
-// {
-//     fn imprime_produtos_desenvolvidos(&self, String) -> ();
-// }
 
 impl Produtor
 {
@@ -22,10 +16,4 @@ impl Produtor
             .expect("Deu n, mano");
         
     }
-}
-
-fn main()
-{
-    let produtor_san = Produtor{user_id: "NGSUHATE".to_string()};
-    produtor_san.imprime_produtos_desenvolvidos("AAAAAAAAAAAAAAAAAAAAA".to_string());
 }
