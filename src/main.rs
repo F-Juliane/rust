@@ -40,4 +40,5 @@ fn main()
         println!("Os favoritos do usuario {} são {:?}", id, favoritos.lista_favoritos)
     }
     escrita::midias_por_produtor(&platform);
+    escrita::faz_backup_usuarios(&platform);
 }

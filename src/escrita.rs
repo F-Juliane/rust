@@ -76,3 +76,26 @@ pub fn midias_por_produtor(plataforma: &plataformaDigital::PlataformaDigital)
 
 }
 
+pub fn faz_backup_usuarios(plataforma: &plataformaDigital::PlataformaDigital)
+{
+    let path = Path::new("relatorios/backup_usuarios.csv");
+    let mut file = File::create(&path).expect("Eu queria ser bonito");
+    
+    for (_, usuario) in plataforma.hash_assinante.iter()
+    {
+        let output = usuario.user_id.clone() + ";" + &usuario.user_name + "\n";
+        file.write_all((output).as_bytes()).expect("Estou triste");
+    }
+
+    for (_, podcaster) in plataforma.hash_podcaster.iter()
+    {
+        let output = podcaster.user_id.clone() + ";" + &podcaster.podcaster_name + "\n";
+        file.write_all((output).as_bytes()).expect("Estou triste");
+    }
+
+    for (_, artista) in plataforma.hash_artista.iter()
+    {
+        let output = artista.user_id.clone() + ";" + &artista.artist_name + "\n";
+        file.write_all((output).as_bytes()).expect("Estou triste");
+    }
+}
