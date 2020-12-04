@@ -1,5 +1,0 @@
-Nome: nome
-Codigo: 10
-Duracao: 32.2
-Ano Lancamento: 2010
-Quantidade de musicas: 8

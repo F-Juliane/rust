@@ -6,8 +6,6 @@ mod extracao;
 mod midias;
 mod plataformaDigital;
 mod podcaster;
-mod produtor;
-mod usuario;
 mod escrita;
 use std::collections::HashMap;
 use plataformaDigital::PlataformaDigital;
@@ -20,7 +18,6 @@ fn main()
         hash_poc: HashMap::new(),
         hash_albuns: HashMap::new(),
         hash_assinante: HashMap::new(),
-        hash_produtor: HashMap::new(),
         hash_musica: HashMap::new(),
         hash_podcast: HashMap::new(),
         hash_genero: HashMap::new(),
