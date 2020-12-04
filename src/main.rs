@@ -8,8 +8,10 @@ mod plataformaDigital;
 mod podcaster;
 mod produtor;
 mod usuario;
+mod escrita;
 use std::collections::HashMap;
 use plataformaDigital::PlataformaDigital;
+
 
 fn main()
 {
@@ -31,5 +33,11 @@ fn main()
     for(sigla, genero) in platform.hash_podcast.iter()
     {
         println!("O código é {} e o significado é {}", sigla, genero.nome);
-    } 
+    }
+    extracao::adiciona_favoritos(&mut platform);
+    for(id, favoritos) in platform.hash_assinante.iter()
+    {
+        println!("Os favoritos do usuario {} são {:?}", id, favoritos.lista_favoritos)
+    }
+    escrita::midias_por_produtor(&platform);
 }
