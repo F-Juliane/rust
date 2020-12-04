@@ -198,3 +198,27 @@ pub fn adiciona_midias(plataforma: &mut plataformaDigital::PlataformaDigital)
         }
     }
 }
+
+
+pub fn adiciona_favoritos(plataforma: &mut plataformaDigital::PlataformaDigital)
+{
+    let mut my_reader_semicolon = ReaderBuilder::new()
+        .delimiter(b';')
+        .from_path("entradas/favoritos.csv").expect("Problema no csv");
+
+    for result in my_reader_semicolon.records()
+    {
+        let record = result.expect("Blablacar");
+        let user_id = record[0].to_string();
+        let midias: Vec<&str> = record[1].split(", ").collect();
+        println!("O ID BUSCADO É [{}]", user_id);
+        let user = plataforma.hash_assinante.get_mut(&user_id).unwrap();
+        for midia in midias
+        {
+            user.lista_favoritos.push(midia.to_string());
+        }
+
+    }
+
+    
+}
