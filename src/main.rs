@@ -41,4 +41,5 @@ fn main()
     }
     escrita::midias_por_produtor(&platform);
     escrita::faz_backup_usuarios(&platform);
+    escrita::faz_bakcup_midias(&platform);
 }

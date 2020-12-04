@@ -76,6 +76,7 @@ pub fn midias_por_produtor(plataforma: &plataformaDigital::PlataformaDigital)
 
 }
 
+
 pub fn faz_backup_usuarios(plataforma: &plataformaDigital::PlataformaDigital)
 {
     let path = Path::new("relatorios/backup_usuarios.csv");
@@ -98,4 +99,105 @@ pub fn faz_backup_usuarios(plataforma: &plataformaDigital::PlataformaDigital)
         let output = artista.user_id.clone() + ";" + &artista.artist_name + "\n";
         file.write_all((output).as_bytes()).expect("Estou triste");
     }
+}
+
+
+fn get_producters_vec(plataforma: &plataformaDigital::PlataformaDigital, 
+    midia_id: &str, tipo: &str) -> Vec<String>
+{
+    let mut prod_vec = Vec::new();
+    if tipo == "M"
+    
+    {
+        for (_, artista) in plataforma.hash_artista.iter()
+        {
+            for midia in &artista.lista_musicas
+            {
+                if midia == midia_id
+                {
+                    prod_vec.push(artista.user_id.clone());
+                    break;
+                }
+            }
+        }
+    }
+
+    if tipo == "P"
+    {
+        for (_, podcaster) in plataforma.hash_podcaster.iter()
+        {
+            for midia in &podcaster.lista_podcasts
+            {
+                if midia == midia_id
+                {
+                    prod_vec.push(podcaster.user_id.clone());
+                    break;
+                }
+            }
+        }
+    }
+    
+    return prod_vec;
+}
+
+
+fn get_album_name(plataforma: &plataformaDigital::PlataformaDigital, album_id: &str) -> String
+{
+    let album = plataforma.hash_albuns.get(album_id).unwrap();
+    return album.nome.clone()
+}
+
+
+pub fn faz_bakcup_midias(plataforma: &plataformaDigital::PlataformaDigital)
+{
+    let path = Path::new("relatorios/backup_midias.csv");
+    let mut file = File::create(&path).expect("Eu queria ser bonito");
+    file.write_all("Código;Nome;Tipo;Produtores;Duração;Gênero;Temporada;Álbum;Código do Álbum;Publicação".as_bytes()).expect("argh");
+    file.write_all("\n".as_bytes()).expect("Gorillaz");
+
+    let mut output = String::new();
+    for (_, musica) in plataforma.hash_musica.iter()
+    {   
+        let prod_vec = get_producters_vec(plataforma, &musica.codigo, "M");
+        output = output + &musica.codigo + ";" + &musica.nome + ";" + "M" + ";";
+        for prod in prod_vec.iter()
+        {
+            output = output + prod + ", ";
+        }
+        output.pop(); // Remove o whitespace extra
+        output.pop(); // Remove vírgula extra
+        output = output + ";" + &musica.duracao.to_string() + ";";
+        for genero in musica.genero.iter()
+        {
+            output = output + &genero + ", ";
+        }
+        output.pop(); // Remove o whitespace extra
+        output.pop(); // Remove a vírgula extra
+        output = output + ";" + ";" + &get_album_name(plataforma, &musica.album_id) + ";" + &musica.album_id + 
+            ";" + &musica.ano_lancamento;
+        output = output + "\n";
+    }
+
+    for (_, podcast) in plataforma.hash_podcast.iter()
+    {   
+        let prod_vec = get_producters_vec(plataforma, &podcast.codigo, "P");
+        output = output + &podcast.codigo + ";" + &podcast.nome + ";" + "M" + ";";
+        for prod in prod_vec.iter()
+        {
+            output = output + prod + ", ";
+        }
+        output.pop(); // Remove o whitespace extra
+        output.pop(); // Remove vírgula extra
+        output = output + ";" + &podcast.duracao.to_string() + ";";
+        for genero in podcast.genero.iter()
+        {
+            output = output + &genero + ", ";
+        }
+        output.pop(); // Remove o whitespace extra
+        output.pop(); // Remove a vírgula extra
+        output = output + ";" + &podcast.temporada + ";" + ";" + &podcast.ano_lancamento;
+        output = output + "\n";
+    }
+
+    file.write_all(output.as_bytes()).expect("It is the end");
 }
