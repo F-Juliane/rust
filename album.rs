@@ -5,5 +5,5 @@ pub struct Album
     pub duracao: f32,
     pub ano_lancamento: String,
     pub qtd_musicas: u64,
-    pub artista_id: String,
+    pub artista_id_vec: Vec<String>,
 }

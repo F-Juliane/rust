@@ -8,7 +8,6 @@ use crate::podcaster::Podcaster;
 use crate::midias::{Musica, Podcast};
 use crate::album::Album;
 
-
 pub fn adiciona_generos(plataforma: &mut plataforma_digital::PlataformaDigital)
 {
     let mut my_reader = ReaderBuilder::new()
@@ -22,6 +21,7 @@ pub fn adiciona_generos(plataforma: &mut plataforma_digital::PlataformaDigital)
         plataforma.hash_genero.insert(record[0].to_string(), genero);
     }
 }
+
 
 pub fn adiciona_usuarios(plataforma: &mut plataforma_digital::PlataformaDigital)
 {
@@ -59,6 +59,119 @@ pub fn adiciona_usuarios(plataforma: &mut plataforma_digital::PlataformaDigital)
     }
 }
 
+
+fn add_or_update_album(record: csv::StringRecord, plataforma: &mut plataforma_digital::PlataformaDigital)
+{
+    let artista_id: Vec<&str> = record[3].split(", ").collect();
+    let duracao: f32 = record[4].replace(',', ".").parse().unwrap();
+    let nome_album = record[7].to_string();
+    let codigo_album = record[8].to_string();
+    let ano_lancamento = record[9].to_string();
+
+    if plataforma.hash_albuns.contains_key(&codigo_album)
+    {
+        let mut album_x = (plataforma.hash_albuns.get_mut(&codigo_album)).unwrap();
+        album_x.qtd_musicas = album_x.qtd_musicas + 1;
+        album_x.duracao = album_x.duracao + duracao;
+    }
+    else
+    {
+        let mut album = Album{
+            nome: nome_album.clone(),
+            codigo: codigo_album.clone(),
+            duracao: duracao,
+            ano_lancamento: ano_lancamento.clone(),
+            qtd_musicas: 1,
+            artista_id_vec: Vec::new(),
+        };
+        for id in artista_id
+        {
+            album.artista_id_vec.push(id.to_string());
+        }
+        plataforma.hash_albuns.insert(codigo_album.clone(), album);
+    }
+}
+
+
+fn add_midia(record: csv::StringRecord, plataforma: &mut plataforma_digital::PlataformaDigital)
+{
+    let codigo_midia = record[0].to_string();
+    let nome = record[1].to_string();
+    let duracao: f32 = record[4].replace(',', ".").parse().unwrap();
+    let generos = record[5].split(", ");
+    let codigo_album = record[8].to_string();
+    let ano_lancamento = record[9].to_string();    
+    
+    let mut musica = Musica{
+        codigo: codigo_midia.clone(),
+        nome: nome.clone(),
+        duracao: duracao,
+        ano_lancamento: ano_lancamento.clone(),
+        genero: Vec::new(),
+        album_id: codigo_album.clone(),
+    };
+
+        for genero in generos
+        {
+            musica.genero.push(genero.to_string());
+        }
+        plataforma.hash_musica.insert(codigo_midia, musica);
+}
+
+
+fn add_podcast(record: csv::StringRecord, plataforma: &mut plataforma_digital::PlataformaDigital)
+{
+    let codigo_midia = record[0].to_string();
+    let nome = record[1].to_string();
+    let duracao: f32 = record[4].replace(',', ".").parse().unwrap();
+    let generos = record[5].split(", ");
+    let temporada = record[6].to_string();
+    let ano_lancamento = record[9].to_string();
+    
+    let mut podcast = Podcast{
+        codigo: codigo_midia.clone(),
+        nome: nome.clone(),
+        duracao: duracao,
+        ano_lancamento: ano_lancamento.clone(),
+        genero: Vec::new(),
+        temporada: temporada.clone(),
+    };
+    
+    for genero in generos
+    {
+        podcast.genero.push(genero.to_string());
+    }
+    
+    plataforma.hash_podcast.insert(codigo_midia.clone(), podcast);
+}
+
+fn update_musico(record: csv::StringRecord, plataforma: &mut plataforma_digital::PlataformaDigital)
+{
+    let codigo_midia = record[0].to_string();
+    let codigo_album = record[8].to_string();
+    let artista_id: Vec<&str> = record[3].split(", ").collect();
+    for id in artista_id
+    {
+        let artista = (plataforma.hash_artista.get_mut(&id.to_string())).unwrap();
+        artista.lista_id_albuns.push(codigo_album.clone());
+        artista.lista_musicas.push(codigo_midia.clone());
+    }
+}
+
+
+fn update_podcaster(record: csv::StringRecord, plataforma: &mut plataforma_digital::PlataformaDigital)
+{
+    let codigo_midia = record[0].to_string();
+    let artista_id: Vec<&str> = record[3].split(", ").collect();
+
+    for id in artista_id
+    {
+        let podcaster = (plataforma.hash_podcaster.get_mut(&id.to_string())).unwrap();
+        podcaster.lista_podcasts.push(codigo_midia.clone());
+    }
+}
+
+
 pub fn adiciona_midias(plataforma: &mut plataforma_digital::PlataformaDigital)
 {
     let mut my_reader_semicolon = ReaderBuilder::new()
@@ -68,86 +181,40 @@ pub fn adiciona_midias(plataforma: &mut plataforma_digital::PlataformaDigital)
     for result in my_reader_semicolon.records()
     {
         let record = result.expect("Trouble in paradise");
-        let codigo_midia = record[0].to_string();
-        let nome = record[1].to_string();
         let tipo = record[2].to_string();
-        let artista_id = record[3].to_string();
-        let duracao: f32 = record[4].replace(',', ".").parse().unwrap();
-        let generos = record[5].split(", ");
-        let temporada = record[6].to_string();
-        let nome_album = record[7].to_string();
-        let codigo_album = record[8].to_string();
-        let ano_lancamento = record[9].to_string();
         if tipo == "M"
         {    
-                let mut musica = Musica{
-                    codigo: codigo_midia.clone(),
-                    nome: nome.clone(),
-                    duracao: duracao,
-                    ano_lancamento: ano_lancamento.clone(),
-                    genero: Vec::new(),
-                    album_id: codigo_album.clone(),
-                };
-
-                for genero in generos
-                {
-                    musica.genero.push(genero.to_string());
-                }
-                plataforma.hash_musica.insert(record[0].to_string(), musica);
-
-
-            if plataforma.hash_albuns.contains_key(&codigo_album)
-            {
-                let mut album_x = (plataforma.hash_albuns.get_mut(&codigo_album)).unwrap();
-                album_x.qtd_musicas = album_x.qtd_musicas + 1;
-                album_x.duracao = album_x.duracao + duracao;
-            }
-            else
-            {
-                let album = Album{
-                    nome: nome_album.clone(),
-                    codigo: codigo_album.clone(),
-                    duracao: duracao,
-                    ano_lancamento: ano_lancamento.clone(),
-                    qtd_musicas: 1,
-                    artista_id: artista_id.clone(),
-                };
-                plataforma.hash_albuns.insert(codigo_album.clone(), album);
-            }
-            if artista_id.contains(",")
-            {
-                let ids: Vec<&str> = artista_id.split(", ").collect();
-                for id in ids
-                {
-                    let artista = (plataforma.hash_artista.get_mut(&id.to_string())).unwrap();
-                    artista.lista_id_albuns.push(codigo_album.clone());
-                    artista.lista_musicas.push(codigo_midia.clone());
-                }
-            }            
+            add_midia(record.clone(), plataforma);
+            add_or_update_album(record.clone(), plataforma);
+            update_musico(record.clone(), plataforma);
         }
 
         if tipo == "P"
         {
-            let podcast = Podcast{
-                    codigo: codigo_midia.clone(),
-                    nome: nome.clone(),
-                    duracao: duracao,
-                    ano_lancamento: ano_lancamento.clone(),
-                    genero: Vec::new(),
-                    temporada: temporada.clone(),
-
-            };
-            plataforma.hash_podcast.insert(codigo_midia.clone(), podcast);
-
-            if artista_id.contains(",")
-            {
-                let ids: Vec<&str> = artista_id.split(", ").collect();
-                for id in ids
-                {
-                    let podcaster = (plataforma.hash_podcaster.get_mut(&id.to_string())).unwrap();
-                    podcaster.lista_podcasts.push(codigo_midia.clone());
-                }
-            }
+            add_podcast(record.clone(), plataforma);
+            update_podcaster(record.clone(), plataforma);
         }
     }
+}
+
+
+pub fn adiciona_favoritos(plataforma: &mut plataforma_digital::PlataformaDigital)
+{
+    let mut my_reader_semicolon = ReaderBuilder::new()
+        .delimiter(b';')
+        .from_path("entradas/favoritos.csv").expect("Problema no csv");
+
+    for result in my_reader_semicolon.records()
+    {
+        let record = result.expect("Blablacar");
+        let user_id = record[0].to_string();
+        let midias: Vec<&str> = record[1].split(", ").collect();
+        println!("O ID BUSCADO É [{}]", user_id);
+        let user = plataforma.hash_assinante.get_mut(&user_id).unwrap();
+        for midia in midias
+        {
+            user.lista_favoritos.push(midia.to_string());
+        }
+
+    }   
 }
