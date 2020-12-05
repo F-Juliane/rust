@@ -1,4 +1,6 @@
-//mod midias;
+#[macro_use]
+extern crate lazy_static;
+mod file;
 mod album;
 mod artista;
 mod assinante;

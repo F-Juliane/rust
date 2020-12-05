@@ -1,11 +1,3 @@
-use crate::midias::Musica;
-use crate::album::Album;
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::{Write, BufReader, BufRead, Error};
-
-
 pub struct Artista
 {
     pub user_id: String,

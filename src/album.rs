@@ -1,8 +1,3 @@
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::{Write, BufReader, BufRead, Error};
-
-
 pub struct Album
 {
     pub nome: String,

@@ -1,6 +1,7 @@
 extern crate csv;
 use csv::ReaderBuilder;
-use std::error::Error;
+use std::env;
+use crate::file;
 use crate::midias;
 use crate::plataformaDigital;
 use crate::assinante::Assinante;
@@ -8,13 +9,23 @@ use crate::artista::Artista;
 use crate::podcaster::Podcaster;
 use crate::midias::{Musica, Podcast};
 use crate::album::Album;
+use lazy_static;
+lazy_static!
+{
+    static ref FILE_NAME: file::File = file::set_file_names(env::args().collect());
+
+}
+
+
 
 
 pub fn adiciona_generos(plataforma: &mut plataformaDigital::PlataformaDigital)
 {
+    
+    let path = &FILE_NAME.genero;
     let mut my_reader = ReaderBuilder::new()
         .delimiter(b';')
-        .from_path("entradas/generos.csv").expect("Problema no csv");
+        .from_path(path).expect("Problema no csv");
 
     for result in my_reader.records()
     {
@@ -27,9 +38,10 @@ pub fn adiciona_generos(plataforma: &mut plataformaDigital::PlataformaDigital)
 
 pub fn adiciona_usuarios(plataforma: &mut plataformaDigital::PlataformaDigital)
 {
+    let path = &FILE_NAME.usuarios;
     let mut my_reader = ReaderBuilder::new()
         .delimiter(b';')
-        .from_path("entradas/usuarios.csv").expect("Problema no csv");
+        .from_path(path).expect("Problema no csv");
 
     for result in my_reader.records()
     {
@@ -176,9 +188,10 @@ fn update_podcaster(record: csv::StringRecord, plataforma: &mut plataformaDigita
 
 pub fn adiciona_midias(plataforma: &mut plataformaDigital::PlataformaDigital)
 {
+    let path = &FILE_NAME.midias;
     let mut my_reader_semicolon = ReaderBuilder::new()
         .delimiter(b';')
-        .from_path("entradas/midias.csv").expect("Problema no csv");
+        .from_path(path).expect("Problema no csv");
 
     for result in my_reader_semicolon.records()
     {
@@ -202,9 +215,10 @@ pub fn adiciona_midias(plataforma: &mut plataformaDigital::PlataformaDigital)
 
 pub fn adiciona_favoritos(plataforma: &mut plataformaDigital::PlataformaDigital)
 {
+    let path = &FILE_NAME.favoritos;
     let mut my_reader_semicolon = ReaderBuilder::new()
         .delimiter(b';')
-        .from_path("entradas/favoritos.csv").expect("Problema no csv");
+        .from_path(path).expect("Problema no csv");
 
     for result in my_reader_semicolon.records()
     {
