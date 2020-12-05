@@ -8,9 +8,7 @@
 
 #Executando
 >Basta clonar o repositório e executar o comando "cargo run" para rodar com as entradas padrões. Caso se queira, pode-se especificar arquivos de entrada com nomes diferentes, mas estes devem obrigatoriamente ser colocados dentro da pasta "entradas" e deve-se especificar seus nomes por meio do vetor args, colocando a inicial da tabela antes do nome. Exemplo:
-
->"m lista_midias g lista_generos u user_list f favs". 
-
+>`"m lista_midias g lista_generos u user_list f favs"`
 >O padrão de flags da especificação do trabII de prog3 não está sendo utilizado aqui, pois o compilador de rust não lida bem com o uso de flags neste contexto.
 
 >Os relatórios são salvos na pasta relatorios.
