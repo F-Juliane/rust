@@ -51,6 +51,7 @@ name = "juliane"
 version = "0.1.0"
 dependencies = [
  "csv",
+ "lazy_static",
 ]
 
 [[package]]
